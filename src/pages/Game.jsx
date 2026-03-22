@@ -170,6 +170,22 @@ export default function Game() {
           </div>
         </details>
 
+      {/* 💡 새로 추가된 대본 읽기 섹션 (가장 눈에 띄게!) */}
+        {myRole.selfIntro && (
+          <section className="bg-gray-900 p-5 rounded-xl border-2 border-green-600 shadow-[0_0_15px_rgba(22,163,74,0.3)]">
+            <h3 className="text-lg font-black mb-2 text-green-500 flex items-center">
+              <span className="mr-2">🎙️</span> 게임 시작 시 공개 자기소개
+            </h3>
+            <p className="text-sm text-gray-300 mb-3">
+              친구들이 다 모이면 아래 대본을 감정을 담아 소리 내어 읽어주세요!
+            </p>
+            <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
+              <p className="text-base text-white font-bold leading-relaxed whitespace-pre-line">
+                {myRole.selfIntro}
+              </p>
+            </div>
+          </section>
+        )}
         {/* 💡 새로 추가된 프로필 & 관계도 섹션 */}
         <section className="bg-gray-800 p-5 rounded-xl border border-gray-700">
           <h3 className="text-xl font-bold mb-4 border-b border-gray-700 pb-2 text-white">

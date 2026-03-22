@@ -10,8 +10,8 @@ const SCENARIOS = [
   },
   { 
     id: 'scenario1', 
-    title: '피로 물든 결승전', 
-    desc: '대학교 체육대회 옥상 투신사건',
+    title: '보령 펜션 살인사건', 
+    desc: '대학교 동창회 겨울 여행, 프라이빗 스파에서 벌어진 참극',
     level: '⭐⭐⭐'
   },
   { 
