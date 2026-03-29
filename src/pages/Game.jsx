@@ -266,24 +266,41 @@ export default function Game() {
 
       {selectedLocation && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="bg-gray-800 w-full max-w-sm rounded-2xl p-6 border border-gray-600 shadow-2xl animate-fade-in-up">
-            <div className="flex justify-between items-center mb-4 border-b border-gray-700 pb-3">
+          {/* 💡 1. 모달 전체 높이 제한 (max-h-[90vh]) 및 flex-col 적용, 가로 넓이 약간 확대 (max-w-md) */}
+          <div className="bg-gray-800 w-full max-w-md max-h-[90vh] flex flex-col rounded-2xl p-6 border border-gray-600 shadow-2xl animate-fade-in-up">
+            
+            {/* 💡 2. 헤더 부분 고정 (shrink-0) */}
+            <div className="flex justify-between items-center mb-4 border-b border-gray-700 pb-3 shrink-0">
               <h2 className="text-2xl font-black text-red-500">{selectedLocation.name}</h2>
               <span className="text-xs text-gray-400">발견된 단서</span>
             </div>
             
-            <div className="space-y-4 max-h-80 overflow-y-auto pr-1">
+            {/* 💡 3. 단서 리스트 영역에만 내부 스크롤 적용 (overflow-y-auto, flex-1) */}
+            <div className="space-y-4 pr-2 overflow-y-auto flex-1 custom-scrollbar">
               {selectedLocation.clues.map((clue, idx) => (
-                <div key={idx} className="bg-gray-900 p-4 rounded-lg border border-gray-700">
-                  <h4 className="font-bold text-yellow-500 mb-1">🔍 {clue.name}</h4>
-                  <p className="text-sm text-gray-300 leading-relaxed">{clue.desc}</p>
+                <div key={idx} className="bg-gray-900 p-4 rounded-lg border border-gray-700 flex flex-col space-y-3">
+                  <h4 className="font-bold text-yellow-500">🔍 {clue.name}</h4>
+                  
+                  {clue.imageUrl ? (
+                    <div className="w-full rounded-lg overflow-hidden border border-gray-700 shadow-inner">
+                      <img 
+                        src={clue.imageUrl} 
+                        alt={clue.name} 
+                        className="w-full h-auto object-cover"
+                        loading="lazy"
+                      />
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-300 leading-relaxed">{clue.desc}</p>
+                  )}
                 </div>
               ))}
             </div>
 
+            {/* 💡 4. 하단 닫기 버튼 고정 (shrink-0) */}
             <button
               onClick={() => setSelectedLocation(null)}
-              className="w-full mt-6 py-4 bg-gray-700 hover:bg-gray-600 text-white font-bold rounded-lg transition-colors"
+              className="w-full mt-6 py-4 bg-gray-700 hover:bg-gray-600 text-white font-bold rounded-lg transition-colors shrink-0"
             >
               탐색 종료 (닫기)
             </button>
