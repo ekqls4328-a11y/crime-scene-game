@@ -1,41 +1,38 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+// 💡 name(메인 타이틀)과 desc(서브 타이틀)로 분리
 const THEMES = [
-  { id: 'tutorial', name: '연습게임', icon: '🔍', color: 'bg-blue-900/40' },
-  { id: 'season1', name: '정규 시즌 1', icon: '🎬', color: 'bg-red-900/40' },
-  { id: 'special', name: '단편선', icon: '📖', color: 'bg-purple-900/40' },
-  { id: 'horror', name: '공포 특집', icon: '👻', color: 'bg-green-900/40' }
+  { id: 'tutorial', name: '연습게임', desc: '룰 & 시스템 숙지', icon: '🔍', color: 'bg-blue-900/40' },
+  { id: 'realism', name: '현실 밀착', desc: '일상의 균열', icon: '🏢', color: 'bg-red-900/40' },
+  { id: 'classic', name: '정통 클래식', desc: '고립된 공간', icon: '🚪', color: 'bg-purple-900/40' },
+  { id: 'period', name: '컨셉 연기', desc: '시간의 모래시계', icon: '⏳', color: 'bg-green-900/40' },
+  { id: 'sf', name: 'SF 미스터리', desc: '차가운 금속의 시대', icon: '🚀', color: 'bg-teal-900/40' }
 ];
 
 const SCENARIOS = [
+  // --- 연습게임 (기존 시나리오들) ---
   { 
-    id: 'scenario0', 
-    themeId: 'tutorial',
-    title: '격포항 밀실 실종사건', 
-    desc: '💡 룰과 시스템을 익히는 연습용 사건입니다.',
-    level: '연습게임'
+    id: 'tutorial_0', themeId: 'tutorial',
+    title: '격포항 밀실 실종사건', level: '연습게임', desc: '💡 룰과 시스템을 익히는 연습용 사건입니다.'
   },
   { 
-    id: 'scenario1', 
-    themeId: 'tutorial',
-    title: '보령 펜션 살인사건', 
-    desc: '프라이빗 스파에서 벌어진 참극.',
-    level: '⭐⭐⭐'
+    id: 'tutorial_1', themeId: 'tutorial',
+    title: '보령 펜션 살인사건', level: '⭐⭐⭐', desc: '프라이빗 스파에서 벌어진 참극.'
   },
   { 
-    id: 'scenario2', 
-    themeId: 'tutorial',
-    title: '검은 장미 가면 무도회', 
-    desc: '정전과 함께 벌어진 단 10초의 살인.',
-    level: '⭐⭐⭐⭐⭐'
+    id: 'tutorial_2', themeId: 'tutorial',
+    title: '검은 장미 가면 무도회', level: '⭐⭐⭐⭐⭐', desc: '정전과 함께 벌어진 단 10초의 살인.'
   },
   { 
-    id: 'scenario3', 
-    themeId: 'tutorial',
-    title: '한겨울 캠핑장 사망사건', 
-    desc: '영하 15도 고급 글램핑장의 비밀.',
-    level: '⭐⭐⭐⭐'
+    id: 'tutorial_3', themeId: 'tutorial',
+    title: '한겨울 캠핑장 사망사건', level: '⭐⭐⭐⭐', desc: '영하 15도 고급 글램핑장의 비밀.'
+  },
+  // --- 현실 밀착: 일상의 균열 (신규 시나리오) ---
+  { 
+    id: 'wedding_murder', themeId: 'realism',
+    title: '피로 물든 부케: VIP 신부 대기실 살인사건', level: '⭐⭐⭐⭐', 
+    desc: '본식을 단 30분 앞두고 벌어진 밀실 살인. 가장 축복받아야 할 날, 누가 그녀를 지옥으로 밀어 넣었는가?'
   }
 ];
 
@@ -80,10 +77,17 @@ export default function Lobby() {
               <div
                 key={theme.id}
                 onClick={() => handleThemeSelect(theme.id)}
-                className={`aspect-square flex flex-col items-center justify-center rounded-2xl cursor-pointer border-2 border-gray-700 transition-all active:scale-95 hover:border-red-500 ${theme.color}`}
+                // 💡 p-3(패딩) 추가, text-center 적용
+                className={`aspect-square flex flex-col items-center justify-center p-3 rounded-2xl cursor-pointer border-2 border-gray-700 transition-all active:scale-95 hover:border-red-500 text-center ${theme.color}`}
               >
                 <span className="text-4xl mb-3">{theme.icon}</span>
-                <span className="font-bold text-lg">{theme.name}</span>
+                {/* 💡 break-keep 추가 (단어 단위 줄바꿈), 계층 분리 */}
+                <span className="font-bold text-base leading-tight break-keep mb-1 text-gray-100">
+                  {theme.name}
+                </span>
+                <span className="text-[11px] text-gray-400 leading-tight break-keep">
+                  {theme.desc}
+                </span>
               </div>
             ))}
           </div>

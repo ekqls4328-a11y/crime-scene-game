@@ -1,24 +1,30 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import scenario0Data from '../data/scenario0.json';
-import scenario1Data from '../data/scenario1.json';
-import scenario2Data from '../data/scenario2.json';
-import scenario3Data from '../data/scenario3.json';
+import tutorial0Data from '../data/tutorial/scenario0.json';
+import tutorial1Data from '../data/tutorial/scenario1.json';
+import tutorial2Data from '../data/tutorial/scenario2.json';
+import tutorial3Data from '../data/tutorial/scenario3.json';
+
+// 신규 시나리오
+import weddingMurderData from '../data/realism/wedding_murder.json';
+
+
 
 const SCENARIO_DB = {
-  scenario0: scenario0Data,
-  scenario1: scenario1Data,
-  scenario2: scenario2Data,
-  scenario3: scenario3Data
+  tutorial_0: tutorial0Data,
+  tutorial_1: tutorial1Data,
+  tutorial_2: tutorial2Data,
+  tutorial_3: tutorial3Data,
+  wedding_murder: weddingMurderData
 };
 
 // 💡 상단에 노출될 탭 목록 정의
 const TABS = [
-  { id: 'briefing', label: '브리핑', icon: '📜' },
-  { id: 'intro', label: '자기소개', icon: '🎙️' },
   { id: 'profile', label: '프로필', icon: '👤' },
   { id: 'timeline', label: '타임라인', icon: '🔒', isSecret: true },
+  { id: 'intro', label: '자기소개', icon: '🎙️' },
+  { id: 'briefing', label: '브리핑', icon: '📜' },
   { id: 'investigation', label: '현장탐색', icon: '🔍' }
 ];
 
@@ -31,8 +37,8 @@ export default function Game() {
   const [isRevealed, setIsRevealed] = useState(false);
   const [zoomedImage, setZoomedImage] = useState(null);
   
-  // 💡 활성화된 탭 상태 관리 (기본값: 브리핑)
-  const [activeTab, setActiveTab] = useState('briefing');
+  // 💡 활성화된 탭 상태 관리 (기본값: 프로필)
+  const [activeTab, setActiveTab] = useState('profile');
   
   const navigate = useNavigate();
 
@@ -183,26 +189,34 @@ export default function Game() {
         <h1 className="text-3xl font-black text-red-600 mt-1">{myRole.name}</h1>
         <p className="text-gray-300 mt-1 text-sm">{myRole.role}</p>
         
-        {/* 💡 탭 네비게이션 메뉴 */}
-        <div className="flex space-x-2 mt-4 overflow-x-auto pb-2 [&::-webkit-scrollbar]:hidden">
-          {TABS.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center px-4 py-2 rounded-full whitespace-nowrap text-sm font-bold transition-all ${
-                activeTab === tab.id
-                  ? tab.isSecret 
-                    ? 'bg-red-800 text-white shadow-md border border-red-500' // 활성 상태 (비밀 탭)
-                    : 'bg-white text-black shadow-md' // 활성 상태 (일반 탭)
-                  : tab.isSecret
-                    ? 'bg-red-950/30 text-red-400 border border-red-900/50 hover:bg-red-900/50' // 비활성 상태 (비밀 탭)
-                    : 'bg-gray-800 text-gray-400 hover:bg-gray-700' // 비활성 상태 (일반 탭)
-              }`}
-            >
-              <span className="mr-1">{tab.icon}</span>
-              {tab.label}
-            </button>
-          ))}
+        {/* 💡 탭 네비게이션 컨테이너 (스크롤 힌트 추가) */}
+        <div className="relative mt-4">
+          {/* 실제 스크롤되는 영역 (우측 여백 pr-8 추가로 화살표에 가려지지 않게 함) */}
+          <div className="flex space-x-2 overflow-x-auto pb-2 pr-8 [&::-webkit-scrollbar]:hidden relative z-10">
+            {TABS.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center px-4 py-2 rounded-full whitespace-nowrap text-sm font-bold transition-all shrink-0 ${
+                  activeTab === tab.id
+                    ? tab.isSecret 
+                      ? 'bg-red-800 text-white shadow-md border border-red-500' 
+                      : 'bg-white text-black shadow-md' 
+                    : tab.isSecret
+                      ? 'bg-red-950/30 text-red-400 border border-red-900/50 hover:bg-red-900/50' 
+                      : 'bg-gray-800 text-gray-400 hover:bg-gray-700' 
+                }`}
+              >
+                <span className="mr-1">{tab.icon}</span>
+                {tab.label}
+              </button>
+            ))}
+          </div>
+          
+          {/* 💡 우측 스와이프 유도 그라데이션 및 화살표 */}
+          <div className="absolute right-0 top-0 bottom-2 w-12 bg-gradient-to-l from-gray-900 to-transparent z-20 pointer-events-none flex items-center justify-end pr-1">
+            <span className="text-gray-500 text-[10px] animate-pulse">▶</span>
+          </div>
         </div>
       </header>
 
@@ -233,28 +247,7 @@ export default function Game() {
           </section>
         )}
 
-        {/* 2. 자기소개 탭 */}
-        {activeTab === 'intro' && (
-          <section className="bg-gray-900 p-5 rounded-xl border-2 border-green-600 shadow-[0_0_15px_rgba(22,163,74,0.3)]">
-            <h3 className="text-lg font-black mb-2 text-green-500 flex items-center">
-              <span className="mr-2">🎙️</span> 공개 자기소개 대본
-            </h3>
-            <p className="text-sm text-gray-300 mb-4 bg-gray-800 p-2 rounded">
-              친구들이 다 모이면 아래 대본을 감정을 담아 소리 내어 읽어주세요!
-            </p>
-            {myRole.selfIntro ? (
-              <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
-                <p className="text-base text-white font-bold leading-relaxed whitespace-pre-line">
-                  {myRole.selfIntro}
-                </p>
-              </div>
-            ) : (
-              <p className="text-gray-500 text-center py-4">등록된 자기소개 대본이 없습니다.</p>
-            )}
-          </section>
-        )}
-
-        {/* 3. 프로필 탭 */}
+        {/* 2. 프로필 탭 */}
         {activeTab === 'profile' && (
           <section className="bg-gray-800 p-5 rounded-xl border border-gray-700">
             <h3 className="text-xl font-bold mb-4 border-b border-gray-700 pb-2 text-white">
@@ -277,7 +270,7 @@ export default function Game() {
           </section>
         )}
 
-        {/* 4. 비밀 타임라인 탭 */}
+        {/* 3. 비밀 타임라인 탭 */}
         {activeTab === 'timeline' && (
           <section className="bg-gray-800 p-5 rounded-xl border-2 border-red-900 shadow-lg relative animate-fadeIn">
             <h3 className="text-xl font-bold mb-4 border-b border-red-900 pb-2 text-white flex justify-between items-center">
@@ -301,6 +294,27 @@ export default function Game() {
               <h4 className="text-xs text-yellow-600 mb-2 font-bold">다른 사람에게 주장할 알리바이</h4>
               <p className="text-sm text-yellow-500 font-bold">"{myRole.alibi}"</p>
             </div>
+          </section>
+        )}
+
+        {/* 4. 자기소개 탭 */}
+        {activeTab === 'intro' && (
+          <section className="bg-gray-900 p-5 rounded-xl border-2 border-green-600 shadow-[0_0_15px_rgba(22,163,74,0.3)]">
+            <h3 className="text-lg font-black mb-2 text-green-500 flex items-center">
+              <span className="mr-2">🎙️</span> 공개 자기소개 대본
+            </h3>
+            <p className="text-sm text-gray-300 mb-4 bg-gray-800 p-2 rounded">
+              친구들이 다 모이면 아래 대본을 감정을 담아 소리 내어 읽어주세요!
+            </p>
+            {myRole.selfIntro ? (
+              <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
+                <p className="text-base text-white font-bold leading-relaxed whitespace-pre-line">
+                  {myRole.selfIntro}
+                </p>
+              </div>
+            ) : (
+              <p className="text-gray-500 text-center py-4">등록된 자기소개 대본이 없습니다.</p>
+            )}
           </section>
         )}
 
