@@ -13,10 +13,6 @@ const THEMES = [
 const SCENARIOS = [
   // --- 연습게임 (기존 시나리오들) ---
   { 
-    id: 'tutorial_0', themeId: 'tutorial',
-    title: '격포항 밀실 실종사건', level: '연습게임', desc: '💡 룰과 시스템을 익히는 연습용 사건입니다.'
-  },
-  { 
     id: 'tutorial_1', themeId: 'tutorial',
     title: '보령 펜션 살인사건', level: '⭐⭐⭐', desc: '프라이빗 스파에서 벌어진 참극.'
   },

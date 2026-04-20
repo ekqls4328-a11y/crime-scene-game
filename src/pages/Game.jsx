@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import tutorial0Data from '../data/tutorial/scenario0.json';
 import tutorial1Data from '../data/tutorial/scenario1.json';
 import tutorial2Data from '../data/tutorial/scenario2.json';
 import tutorial3Data from '../data/tutorial/scenario3.json';
@@ -12,7 +11,6 @@ import weddingMurderData from '../data/realism/wedding_murder.json';
 
 
 const SCENARIO_DB = {
-  tutorial_0: tutorial0Data,
   tutorial_1: tutorial1Data,
   tutorial_2: tutorial2Data,
   tutorial_3: tutorial3Data,
