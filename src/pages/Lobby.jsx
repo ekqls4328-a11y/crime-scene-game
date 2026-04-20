@@ -125,10 +125,16 @@ export default function Lobby() {
             ))}
           </div>
 
-          <div className="mt-10 pb-6">
+          {/* 💡 하단 고정 버튼 영역 */}
+          <div className="fixed bottom-0 left-0 right-0 p-4 bg-gray-900 border-t border-gray-800 max-w-md mx-auto z-10">
             <button
               onClick={handleJoin}
-              className="w-full py-4 bg-red-700 hover:bg-red-600 text-white font-bold text-xl rounded-lg shadow-2xl transition-all active:scale-95"
+              disabled={!selectedScenario}
+              className={`w-full py-4 font-bold text-xl rounded-lg shadow-2xl transition-all active:scale-95 ${
+                selectedScenario 
+                  ? 'bg-red-700 hover:bg-red-600 text-white' 
+                  : 'bg-gray-700 text-gray-500 cursor-not-allowed'
+              }`}
             >
               사건 현장 입장하기
             </button>
