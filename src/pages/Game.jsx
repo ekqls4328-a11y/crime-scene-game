@@ -20,6 +20,10 @@ export default function Game() {
   const [scenarioId, setScenarioId] = useState('');
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [showResult, setShowResult] = useState(false);
+
+  // 💡 새로 추가할 상태값 2개
+  const [isRevealed, setIsRevealed] = useState(false); // 스포일러 방지용
+  const [zoomedImage, setZoomedImage] = useState(null); // 단서 이미지 확대용
   
   const navigate = useNavigate();
 
@@ -123,18 +127,37 @@ export default function Game() {
     return (
       <div className="min-h-screen p-6 flex flex-col items-center justify-center bg-black text-white text-center animate-fade-in overflow-y-auto">
         <h2 className="text-xl text-gray-400 tracking-widest mb-2">사건의 전말</h2>
-        <h1 className="text-4xl font-black text-white mb-8">
-          진범은 바로 <br/>
-          <span className="text-red-600 text-6xl block mt-4 drop-shadow-[0_0_20px_rgba(220,38,38,0.8)]">
-            {killer.name}
-          </span>
-        </h1>
+        
+        {/* 💡 스포일러 방지 래퍼 */}
+        <div 
+          onClick={() => setIsRevealed(true)}
+          className="relative w-full max-w-sm flex flex-col items-center cursor-pointer mb-10"
+        >
+          {/* 가림막 오버레이 */}
+          {!isRevealed && (
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/40 rounded-xl">
+              <span className="text-white font-bold bg-red-600 px-5 py-3 rounded-full animate-bounce shadow-[0_0_15px_rgba(220,38,38,0.8)]">
+                👆 터치하여 진범 확인
+              </span>
+            </div>
+          )}
 
-        <div className="bg-gray-900 border border-red-900 p-6 rounded-xl w-full max-w-sm mb-10 shadow-2xl">
-          <h3 className="text-yellow-500 font-bold mb-4 text-lg">살해 동기 및 수법</h3>
-          <p className="text-gray-300 text-sm leading-loose text-left whitespace-pre-line">
-            {killer.secretBackground}
-          </p>
+          {/* 실제 결과 텍스트 (isRevealed 상태에 따라 blur-xl 적용/해제) */}
+          <div className={`transition-all duration-1000 w-full ${!isRevealed ? 'blur-xl select-none' : 'blur-0'}`}>
+            <h1 className="text-4xl font-black text-white mb-8">
+              진범은 바로 <br/>
+              <span className="text-red-600 text-6xl block mt-4 drop-shadow-[0_0_20px_rgba(220,38,38,0.8)]">
+                {killer.name}
+              </span>
+            </h1>
+
+            <div className="bg-gray-900 border border-red-900 p-6 rounded-xl w-full shadow-2xl">
+              <h3 className="text-yellow-500 font-bold mb-4 text-lg">살해 동기 및 수법</h3>
+              <p className="text-gray-300 text-sm leading-loose text-left whitespace-pre-line">
+                {killer.secretBackground}
+              </p>
+            </div>
+          </div>
         </div>
 
         <button
@@ -167,6 +190,20 @@ export default function Game() {
           </summary>
           <div className="p-4 pt-0 text-sm text-gray-300 leading-relaxed whitespace-pre-line border-t border-gray-700 mt-2">
             {scenarioData.summary}
+            {/* 💡 새로 추가할 현장 사진 보기 버튼 (데이터가 있을 때만 렌더링) */}
+            {scenarioData.briefingImageUrl && (
+              <div className="pt-2 border-t border-gray-700 mt-4">
+                <button
+                  // 아까 만들어둔 이미지 줌 상태를 그대로 재활용!
+                  onClick={() => setZoomedImage(scenarioData.briefingImageUrl)}
+                  className="w-full flex items-center justify-center space-x-2 py-3 bg-red-950/40 hover:bg-red-950/70 border border-red-900 text-red-300 rounded-lg transition-colors font-bold text-xs"
+                >
+                  <span className="text-base">💀</span> 
+                  <span>사건 현장(피해자 상태) 사진 확인</span>
+                  <span className="text-red-500 text-[10px] font-normal">(약혐주의)</span>
+                </button>
+              </div>
+            )}
           </div>
         </details>
 
@@ -286,7 +323,10 @@ export default function Game() {
                       <img 
                         src={clue.imageUrl} 
                         alt={clue.name} 
-                        className="w-full h-auto object-cover"
+                        // 💡 클릭 시 상태 업데이트
+                        onClick={() => setZoomedImage(clue.imageUrl)} 
+                        // 💡 커서 스타일 변경
+                        className="w-full h-auto object-cover cursor-zoom-in active:opacity-70 transition-opacity"
                         loading="lazy"
                       />
                     </div>
@@ -304,6 +344,24 @@ export default function Game() {
             >
               탐색 종료 (닫기)
             </button>
+          </div>
+        </div>
+      )}
+      {zoomedImage && (
+        <div 
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-sm p-2 animate-fade-in"
+          onClick={() => setZoomedImage(null)} // 여백이나 이미지 누르면 닫힘
+        >
+          <div className="relative w-full h-full flex items-center justify-center">
+            {/* 우측 상단 닫기 아이콘 */}
+            <span className="absolute top-4 right-4 text-white text-xl font-bold bg-gray-800 border border-gray-600 w-10 h-10 rounded-full flex items-center justify-center cursor-pointer shadow-lg z-[101]">
+              ✕
+            </span>
+            <img 
+              src={zoomedImage} 
+              alt="확대된 단서" 
+              className="max-w-full max-h-full object-contain select-none"
+            />
           </div>
         </div>
       )}

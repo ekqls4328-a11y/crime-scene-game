@@ -1,87 +1,140 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+const THEMES = [
+  { id: 'tutorial', name: '연습게임', icon: '🔍', color: 'bg-blue-900/40' },
+  { id: 'season1', name: '정규 시즌 1', icon: '🎬', color: 'bg-red-900/40' },
+  { id: 'special', name: '단편선', icon: '📖', color: 'bg-purple-900/40' },
+  { id: 'horror', name: '공포 특집', icon: '👻', color: 'bg-green-900/40' }
+];
+
 const SCENARIOS = [
   { 
     id: 'scenario0', 
+    themeId: 'tutorial',
     title: '격포항 밀실 실종사건', 
-    desc: '💡 [튜토리얼] 본 게임 전 룰과 시스템을 익히는 연습용 사건입니다.',
+    desc: '💡 룰과 시스템을 익히는 연습용 사건입니다.',
     level: '연습게임'
   },
   { 
     id: 'scenario1', 
+    themeId: 'tutorial',
     title: '보령 펜션 살인사건', 
-    desc: '대학교 동창회 겨울 여행, 프라이빗 스파에서 벌어진 참극',
+    desc: '프라이빗 스파에서 벌어진 참극.',
     level: '⭐⭐⭐'
   },
   { 
     id: 'scenario2', 
-    title: '검은 장미 가면 무도회 살인 사건', 
-    desc: '상류층만 초대된 비밀 가면 무도회. 정전과 함께 벌어진 단 10초의 살인. ‘아주 짧은 순간’ 안에서 벌어졌다.',
+    themeId: 'tutorial',
+    title: '검은 장미 가면 무도회', 
+    desc: '정전과 함께 벌어진 단 10초의 살인.',
     level: '⭐⭐⭐⭐⭐'
   },
   { 
     id: 'scenario3', 
-    title: '한겨울 캠핑장 텐트 사망사건', 
-    desc: '영하 15도로 떨어진 첩첩산중의 고급 글램핑장.',
+    themeId: 'tutorial',
+    title: '한겨울 캠핑장 사망사건', 
+    desc: '영하 15도 고급 글램핑장의 비밀.',
     level: '⭐⭐⭐⭐'
   }
 ];
 
 export default function Lobby() {
-  const [selectedScenario, setSelectedScenario] = useState(SCENARIOS[0].id);
+  const [viewMode, setViewMode] = useState('themes'); // 'themes' | 'scenarios'
+  const [selectedTheme, setSelectedTheme] = useState(null);
+  const [selectedScenario, setSelectedScenario] = useState('');
+  
   const navigate = useNavigate();
 
+  // 특정 테마 선택 시 시나리오 목록으로 전환
+  const handleThemeSelect = (themeId) => {
+    setSelectedTheme(themeId);
+    setViewMode('scenarios');
+    // 해당 테마의 첫 시나리오 자동 선택
+    const firstInTheme = SCENARIOS.find(s => s.themeId === themeId);
+    if (firstInTheme) setSelectedScenario(firstInTheme.id);
+  };
+
   const handleJoin = () => {
-    // 선택한 시나리오 ID만 로컬 스토리지에 저장
+    if (!selectedScenario) return;
     localStorage.setItem('scenarioId', selectedScenario);
-    
-    // 게임 화면으로 이동
     navigate('/game');
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-10 px-6 bg-gray-900 text-white">
-      {/* 타이틀 영역 */}
-      <div className="text-center mb-10">
-        <h1 className="text-5xl font-black text-red-600 mb-4 tracking-widest drop-shadow-md">
+    <div className="flex flex-col items-center min-h-screen py-10 px-6 bg-gray-900 text-white font-sans">
+      {/* 상단 타이틀 */}
+      <div className="text-center mb-8">
+        <h1 className="text-5xl font-black text-red-600 mb-2 tracking-widest drop-shadow-lg">
           CRIME SCENE
         </h1>
-        <p className="text-gray-400 text-lg tracking-wide">플레이할 사건을 선택하세요</p>
+        <p className="text-gray-400 text-sm">진실을 밝히는 자, 누구인가</p>
       </div>
 
-      {/* 시나리오 선택 리스트 */}
-      <div className="w-full max-w-sm space-y-4 mb-10">
-        {SCENARIOS.map((scenario) => (
-          <div 
-            key={scenario.id}
-            onClick={() => setSelectedScenario(scenario.id)}
-            className={`p-4 rounded-xl cursor-pointer border-2 transition-all ${
-              selectedScenario === scenario.id 
-                ? 'border-red-600 bg-gray-800 shadow-[0_0_15px_rgba(220,38,38,0.3)]' 
-                : 'border-gray-700 bg-gray-800/50 hover:border-gray-500'
-            }`}
-          >
-            <div className="flex justify-between items-end mb-1">
-              <h3 className={`font-bold text-lg ${selectedScenario === scenario.id ? 'text-red-500' : 'text-gray-300'}`}>
-                {scenario.title}
-              </h3>
-              <span className="text-xs text-yellow-500">{scenario.level}</span>
-            </div>
-            <p className="text-gray-400 text-sm">{scenario.desc}</p>
+      {/* 1단계: 테마 선택 화면 */}
+      {viewMode === 'themes' && (
+        <div className="w-full max-w-md animate-fadeIn">
+          <h2 className="text-xl font-bold mb-6 text-center text-gray-300">사건 테마를 선택하세요</h2>
+          <div className="grid grid-cols-2 gap-4">
+            {THEMES.map((theme) => (
+              <div
+                key={theme.id}
+                onClick={() => handleThemeSelect(theme.id)}
+                className={`aspect-square flex flex-col items-center justify-center rounded-2xl cursor-pointer border-2 border-gray-700 transition-all active:scale-95 hover:border-red-500 ${theme.color}`}
+              >
+                <span className="text-4xl mb-3">{theme.icon}</span>
+                <span className="font-bold text-lg">{theme.name}</span>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </div>
+      )}
 
-      {/* 입장 버튼 */}
-      <div className="w-full max-w-sm">
-        <button
-          onClick={handleJoin}
-          className="w-full py-4 bg-red-700 hover:bg-red-600 text-white font-bold text-xl rounded-lg shadow-lg transition-all active:scale-95"
-        >
-          사건 현장 입장하기
-        </button>
-      </div>
+      {/* 2단계: 시나리오 선택 화면 */}
+      {viewMode === 'scenarios' && (
+        <div className="w-full max-w-sm flex flex-col flex-1 animate-fadeIn">
+          <div className="flex items-center mb-6">
+            <button 
+              onClick={() => setViewMode('themes')}
+              className="text-gray-400 hover:text-white flex items-center transition-colors"
+            >
+              <span className="mr-2">←</span> 테마 변경
+            </button>
+            <h2 className="ml-4 font-bold text-xl text-red-500">
+              {THEMES.find(t => t.id === selectedTheme)?.name}
+            </h2>
+          </div>
+
+          <div className="space-y-4 flex-1">
+            {SCENARIOS.filter(s => s.themeId === selectedTheme).map((scenario) => (
+              <div 
+                key={scenario.id}
+                onClick={() => setSelectedScenario(scenario.id)}
+                className={`p-5 rounded-xl cursor-pointer border-2 transition-all ${
+                  selectedScenario === scenario.id 
+                    ? 'border-red-600 bg-gray-800 shadow-xl' 
+                    : 'border-gray-700 bg-gray-800/40 opacity-70'
+                }`}
+              >
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="font-bold text-lg leading-tight">{scenario.title}</h3>
+                  <span className="text-xs text-yellow-500 shrink-0 ml-2">{scenario.level}</span>
+                </div>
+                <p className="text-gray-400 text-xs leading-relaxed">{scenario.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-10 pb-6">
+            <button
+              onClick={handleJoin}
+              className="w-full py-4 bg-red-700 hover:bg-red-600 text-white font-bold text-xl rounded-lg shadow-2xl transition-all active:scale-95"
+            >
+              사건 현장 입장하기
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
