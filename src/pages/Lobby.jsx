@@ -105,7 +105,8 @@ export default function Lobby() {
             </h2>
           </div>
 
-          <div className="space-y-4 flex-1">
+          {/* 💡 시나리오 리스트 영역: 하단 여백을 pb-40으로 넉넉하게 수정 */}
+          <div className="space-y-4 flex-1 pb-40"> 
             {SCENARIOS.filter(s => s.themeId === selectedTheme).map((scenario) => (
               <div 
                 key={scenario.id}
@@ -123,6 +124,9 @@ export default function Lobby() {
                 <p className="text-gray-400 text-xs leading-relaxed">{scenario.desc}</p>
               </div>
             ))}
+            
+            {/* 💡 추가 팁: 리스트 맨 마지막에 명시적인 투명 공간 추가 */}
+            <div className="h-10 w-full"></div>
           </div>
 
           {/* 💡 하단 고정 버튼 영역 */}
