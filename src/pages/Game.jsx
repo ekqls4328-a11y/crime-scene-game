@@ -48,9 +48,12 @@ export default function Game() {
     }
     setScenarioId(id);
     
-    const savedRole = localStorage.getItem('myRole');
+    const savedRole = localStorage.getItem(`myRole_${id}`);
     if (savedRole) {
       setMyRole(JSON.parse(savedRole));
+    } else {
+      // 💡 핵심: 다른 시나리오에 저장된 값이 넘어오지 않도록 리셋
+      setMyRole(null); 
     }
   }, [navigate]);
 
@@ -60,7 +63,8 @@ export default function Game() {
     const confirmCheck = window.confirm(`'${suspect.name}' 역할을 선택하시겠습니까?\n한 번 고르면 바꿀 수 없습니다!`);
     if (confirmCheck) {
       setMyRole(suspect);
-      localStorage.setItem('myRole', JSON.stringify(suspect));
+      // 💡 수정된 부분: 시나리오 ID가 결합된 키값으로 저장하기
+      localStorage.setItem(`myRole_${scenarioId}`, JSON.stringify(suspect));
     }
   };
 
@@ -71,7 +75,8 @@ export default function Game() {
   };
 
   const handleGoLobby = () => {
-    localStorage.removeItem('myRole');
+    // 💡 수정된 부분: 해당 시나리오의 역할만 삭제
+    localStorage.removeItem(`myRole_${scenarioId}`);
     navigate('/');
   };
 
@@ -228,7 +233,15 @@ export default function Game() {
               <span className="mr-2">📜</span> 사건 브리핑
             </h3>
             <div className="p-5 text-sm text-gray-300 leading-relaxed whitespace-pre-line">
-              {scenarioData.summary}
+              {/* 💡 요약(summary) - 붉은색 톤으로 살짝 강조 */}
+              <p className="text-red-400 font-bold mb-4 pb-4 border-b border-gray-700">
+                {scenarioData.summary}
+              </p>
+              
+              {/* 💡 상세 상황(desc) - 본문 내용 */}
+              <p className="text-gray-300">
+                {scenarioData.desc}
+              </p>
               {scenarioData.briefingImageUrl && (
                 <div className="pt-4 border-t border-gray-700 mt-4">
                   <button
